@@ -22,10 +22,7 @@
         </el-tooltip>
       </template>
 
-      <el-dropdown
-        class="avatar-container right-menu-item hover-effect"
-        trigger="click"
-      >
+      <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
           <img :src="avatar + '?imageView2/1/w/80/h/80'" class="user-avatar">
           <i class="el-icon-caret-bottom" />
@@ -69,7 +66,13 @@ export default {
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
-      await this.$store.dispatch('user/logout')
+      await this.$store.dispatch('user/logout').then(() => {
+        this.$notify({
+          title: '退出成功',
+          message: `欢迎下次登录！`,
+          type: 'success'
+        })
+      })
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     }
   }

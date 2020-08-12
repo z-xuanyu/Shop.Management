@@ -27,12 +27,7 @@
         />
       </el-form-item>
 
-      <el-tooltip
-        v-model="capsTooltip"
-        content="Caps lock is On"
-        placement="right"
-        manual
-      >
+      <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
         <el-form-item prop="password">
           <span class="svg-container">
             <svg-icon icon-class="password" />
@@ -51,9 +46,7 @@
             @keyup.enter.native="handleLogin"
           />
           <span class="show-pwd" @click="showPwd">
-            <svg-icon
-              :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
-            />
+            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
           </span>
         </el-form-item>
       </el-tooltip>
@@ -66,13 +59,7 @@
       >立即登录</el-button>
 
       <div style="position:relative">
-        <el-button
-          class="thirdparty-button"
-          type="primary"
-          @click="showDialog = true"
-        >
-          第三方登录
-        </el-button>
+        <el-button class="thirdparty-button" type="primary" @click="showDialog = true">第三方登录</el-button>
       </div>
     </el-form>
 
@@ -162,7 +149,7 @@ export default {
       })
     },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
+      this.$refs.loginForm.validate((valid) => {
         if (valid) {
           this.loading = true
           this.$store
@@ -173,6 +160,11 @@ export default {
                 query: this.otherQuery
               })
               this.loading = false
+              this.$notify({
+                title: '登录成功',
+                message: `您好，${this.$store.getters.name}!`,
+                type: 'success'
+              })
             })
             .catch(() => {
               this.loading = false
