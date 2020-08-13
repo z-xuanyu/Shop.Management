@@ -22,6 +22,9 @@ import * as filters from './filters' // 全局过滤器
 // 引入avue
 import Avue from '@smallwei/avue'
 import '@smallwei/avue/lib/index.css'
+import http from '@/utils/request'
+window.axios = http
+// 注意：如果使用字典需要先赋值axios为全局，再Vue.use(Avue)
 Vue.use(Avue)
 
 Vue.use(Element, {

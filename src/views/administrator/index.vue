@@ -5,7 +5,22 @@
       :data="adminData"
       :page="page"
       @on-load="onLoad"
-    />
+      @row-save="handleSave"
+      @row-del="handleDel"
+    >
+      <!-- 管理员状态 -->
+      <template slot="status" slot-scope="scope">
+        <el-tag type="success" size="small">{{ scope.row.status }}</el-tag>
+      </template>
+      <template slot="isSuper" slot-scope="scope">
+        <el-tag size="small">{{ scope.row.isSuper }}</el-tag>
+      </template>
+      <!-- 操作栏 -->
+      <template slot="menu" slot-scope="{type,size}">
+        <el-button icon="el-icon-refresh" :size="size" :type="type">禁用</el-button>
+        <el-button icon="el-icon-refresh" :size="size" :type="type">重置密码</el-button>
+      </template>
+    </avue-crud>
   </div>
 </template>
 
@@ -19,16 +34,18 @@ export default {
       option: {
         border: true,
         index: true,
+        menuWidth: 300,
         headerAlign: 'center',
         align: 'center',
         addTitle: '添加管理员',
+        editTitle: '编辑管理员',
         dialogWidth: '50%',
         column: [
           {
             width: 130,
             label: '用户名',
             prop: 'name',
-            span: 24,
+            row: true,
             rules: [
               {
                 required: true,
@@ -41,7 +58,7 @@ export default {
             width: 200,
             label: '邮箱',
             prop: 'email',
-            span: 24,
+            row: true,
             rules: [
               {
                 required: true,
@@ -54,15 +71,15 @@ export default {
             label: '头像',
             prop: 'avatar',
             type: 'upload',
-            listType: 'picture-img',
             span: 24,
-            // 图片地址前缀
+            listType: 'picture-img',
+            action: 'avatarUpload',
+            // 注意:如返回(data:{url:'xxxx'}),则res配置为data
             propsHttp: {
-              home: 'http://demo.cssmoban.com'
+              url: 'url'
             },
             tip: '只能上传jpg/png用户头像，且不超过500kb',
             // 图片上传接口
-            action: '/imgupload',
             rules: [
               {
                 required: true,
@@ -74,8 +91,21 @@ export default {
           {
             label: '状态',
             prop: 'status',
-            type: 'switch',
-            span: 24,
+            type: 'select',
+            dicData: [
+              {
+                label: '开启',
+                value: 1
+              },
+              {
+                label: '禁用',
+                value: 2
+              }
+            ],
+            row: true,
+            span: 8,
+            slot: true,
+            editDisplay: false,
             rules: [
               {
                 required: true,
@@ -87,8 +117,21 @@ export default {
           {
             label: '超级管理员',
             prop: 'isSuper',
-            span: 24,
-            type: 'switch'
+            row: true,
+            slot: true,
+            editDisplay: false,
+            span: 8,
+            type: 'select',
+            dicData: [
+              {
+                label: '开启',
+                value: 1
+              },
+              {
+                label: '禁用',
+                value: 2
+              }
+            ]
           }
         ]
       },
@@ -98,7 +141,7 @@ export default {
           name: 'xuanyu',
           email: '812006298@qq.com',
           avatar:
-            '/cssthemes5/twts_236_rage/assets/images/background/header.jpg',
+            'http://demo.cssmoban.com/cssthemes5/twts_236_rage/assets/images/background/header.jpg',
           status: '开启',
           isSuper: '是'
         },
@@ -107,7 +150,7 @@ export default {
           name: 'ayuer',
           email: '812006298@qq.com',
           avatar:
-            '/cssthemes5/twts_236_rage/assets/images/background/header.jpg',
+            'http://demo.cssmoban.com/cssthemes5/twts_236_rage/assets/images/background/header.jpg',
           status: '开启',
           isSuper: '是'
         }
@@ -117,6 +160,14 @@ export default {
   methods: {
     onLoad(page) {
       this.page.total = 40
+    },
+    // 删除管理员
+    handleDel(row, index) {
+      console.log(row, index)
+    },
+    // 保存管理员
+    handleSave(row) {
+      console.log(row)
     }
   }
 }
