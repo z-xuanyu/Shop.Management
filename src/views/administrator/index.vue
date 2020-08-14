@@ -237,7 +237,7 @@ export default {
     },
     // 删除管理员
     handleDel(row) {
-      this.$confirm(`您确定要删除“${row.username}”改管理员吗？`, '危险提示:')
+      this.$confirm(`您确定要删除“${row.username}”该管理员吗？`, '危险提示:')
         .then(() => {
           if (row.isSuper) {
             this.$notify.error({
