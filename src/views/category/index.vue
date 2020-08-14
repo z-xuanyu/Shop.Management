@@ -1,6 +1,6 @@
 <template>
   <div>
-    测试页面
+    分类管理
   </div>
 </template>
 

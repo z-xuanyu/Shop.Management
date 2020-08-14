@@ -99,12 +99,65 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   {
-    path: 'link',
+    path: '/category',
     component: Layout,
     children: [
       {
-        path: 'https://www.zhouxuanyu.com',
-        meta: { title: '轩钰博客', icon: 'link' }
+        path: 'index',
+        name: 'category',
+        component: () => import('@/views/category/index'),
+        meta: { title: '类别管理', icon: 'guide', roles: ['admin', 'edit'] }
+      }
+    ]
+  },
+  {
+    path: '/tag',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'tag',
+        component: () => import('@/views/tag/index'),
+        meta: { title: '标签管理', icon: 'user', roles: ['admin', 'edit'] }
+      }
+    ]
+
+  },
+  {
+    path: '/order',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'order',
+        component: () => import('@/views/order/index'),
+        meta: { title: '订单管理', icon: 'user', roles: ['admin', 'edit'] }
+      }
+    ]
+
+  },
+  {
+    path: '/product',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'product',
+        component: () => import('@/views/product/index'),
+        meta: { title: '商品管理', icon: 'user', roles: ['admin', 'edit'] }
+      }
+    ]
+
+  },
+  {
+    path: '/member',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'member',
+        component: () => import('@/views/member/index'),
+        meta: { title: '会员管理', icon: 'user', roles: ['admin', 'edit'] }
       }
     ]
   },
@@ -119,7 +172,29 @@ export const asyncRoutes = [
         meta: { title: '管理员', icon: 'user', roles: ['admin'] }
       }
     ]
+  },
+  {
+    path: '/banner',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'banner',
+        component: () => import('@/views/banner/index'),
+        meta: { title: 'Banner管理', icon: 'user', roles: ['admin', 'edit'] }
+      }
+    ]
 
+  },
+  {
+    path: 'link',
+    component: Layout,
+    children: [
+      {
+        path: 'https://www.zhouxuanyu.com',
+        meta: { title: '轩钰博客', icon: 'link' }
+      }
+    ]
   },
 
   // 404页必须放在最后！
