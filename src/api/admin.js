@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 // 获取管理员列表
-export function getAadminList(data) {
+export function getAdminList(data) {
   return request({
     url: 'users',
     method: 'get',
