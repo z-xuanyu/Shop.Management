@@ -106,7 +106,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'category',
         component: () => import('@/views/category/index'),
-        meta: { title: '类别管理', icon: 'guide', roles: ['admin', 'edit'] }
+        meta: { title: '类别管理', icon: 'el-icon-collection', roles: ['admin', 'edit'] }
       }
     ]
   },
@@ -118,7 +118,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'tag',
         component: () => import('@/views/tag/index'),
-        meta: { title: '标签管理', icon: 'user', roles: ['admin', 'edit'] }
+        meta: { title: '标签管理', icon: 'el-icon-collection-tag', roles: ['admin', 'edit'] }
       }
     ]
 
@@ -131,7 +131,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'order',
         component: () => import('@/views/order/index'),
-        meta: { title: '订单管理', icon: 'user', roles: ['admin', 'edit'] }
+        meta: { title: '订单管理', icon: 'el-icon-s-order', roles: ['admin', 'edit'] }
       }
     ]
 
@@ -144,7 +144,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'product',
         component: () => import('@/views/product/index'),
-        meta: { title: '商品管理', icon: 'user', roles: ['admin', 'edit'] }
+        meta: { title: '商品管理', icon: 'el-icon-s-goods', roles: ['admin', 'edit'] }
       }
     ]
 
@@ -157,7 +157,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'member',
         component: () => import('@/views/member/index'),
-        meta: { title: '会员管理', icon: 'user', roles: ['admin', 'edit'] }
+        meta: { title: '会员管理', icon: 'el-icon-s-custom', roles: ['admin', 'edit'] }
       }
     ]
   },
@@ -169,7 +169,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'administrator',
         component: () => import('@/views/administrator/index'),
-        meta: { title: '管理员', icon: 'user', roles: ['admin'] }
+        meta: { title: 'Admin管理', icon: 'user', roles: ['admin'] }
       }
     ]
   },
@@ -181,7 +181,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'banner',
         component: () => import('@/views/banner/index'),
-        meta: { title: 'Banner管理', icon: 'user', roles: ['admin', 'edit'] }
+        meta: { title: 'Banner管理', icon: 'el-icon-picture', roles: ['admin', 'edit'] }
       }
     ]
 
@@ -192,7 +192,7 @@ export const asyncRoutes = [
     children: [
       {
         path: 'https://www.zhouxuanyu.com',
-        meta: { title: '轩钰博客', icon: 'link' }
+        meta: { title: '皇家族基地', icon: 'el-icon-paperclip' }
       }
     ]
   },
