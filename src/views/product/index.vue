@@ -2,15 +2,25 @@
   <div class="product-page">
     <!-- 查询选择,输入框 -->
     <el-row class="query">
-      <el-col :span="8">
+      <el-col :span="8" :xs="24">
         <span>商品编号:</span>
-        <el-input v-model="query.num" size="small" style="width:70%" placeholder="请输入编号" />
+        <el-input
+          v-model="query.num"
+          size="small"
+          style="width:70%"
+          placeholder="请输入编号"
+        />
       </el-col>
-      <el-col :span="8">
+      <el-col :span="8" :xs="24">
         <span>商品名称:</span>
-        <el-input v-model="query.name" size="small" style="width:70%" placeholder="请输入商品名称" />
+        <el-input
+          v-model="query.name"
+          size="small"
+          style="width:70%"
+          placeholder="请输入商品名称"
+        />
       </el-col>
-      <el-col :span="8">
+      <el-col :span="8" :xs="24">
         <span>商品状态:</span>
         <avue-select
           v-model="query.status"
@@ -21,7 +31,7 @@
           :dic="statusDic"
         />
       </el-col>
-      <el-col :span="8">
+      <el-col :span="8" :xs="24">
         <span>商品类别:</span>
         <avue-select
           v-model="query.categoryID"
@@ -32,7 +42,7 @@
           :dic="categoryDic"
         />
       </el-col>
-      <el-col :span="8">
+      <el-col :span="8" :xs="24">
         <span>商品标签:</span>
         <avue-select
           v-model="query.tagID"
@@ -44,8 +54,12 @@
         />
       </el-col>
       <!-- 查询按钮 -->
-      <el-col :span="8" class="query-btn">
-        <el-button size="small" type="primary">查询</el-button>
+      <el-col :span="8" :xs="24" class="query-btn">
+        <el-button
+          style="margin-right:10px"
+          size="small"
+          type="primary"
+        >查询</el-button>
         <el-button size="small">重置</el-button>
       </el-col>
     </el-row>
@@ -57,7 +71,13 @@
     </div>
     <!-- 商品列表 -->
     <div class="goods-list">
-      商品列表
+      <el-row>
+        <el-col v-for="item in 6" :key="item" :span="8">
+          <div class="goods-item">
+            878787
+          </div>
+        </el-col>
+      </el-row>
     </div>
   </div>
 </template>
@@ -106,30 +126,37 @@ export default {
         font-size: 14px;
       }
     }
-    .query-btn{
+    .query-btn {
       justify-content: flex-end;
       padding-right: 50px;
     }
   }
   // 添加商品
-  .add-good{
+  .add-good {
     padding: 30px;
     background-color: #ffffff;
     margin-top: 30px;
     text-align: center;
     border: 1px dashed #dddddd;
     cursor: pointer;
-    &:hover{
+    &:hover {
       border-color: #1890ff;
     }
-    span{
+    span {
       font-size: 14px;
       margin-left: 10px;
     }
   }
   // 商品列表
-  .goods-list{
-    margin-top: 30px;
+  .goods-list {
+    margin-top: 10px;
+    .el-col{
+      padding: 20px;
+      .goods-item{
+        padding: 20px;
+        background-color: #ffffff;
+      }
+    }
   }
 }
 </style>
