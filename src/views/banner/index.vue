@@ -1,5 +1,5 @@
 <template>
-  <div>banner管理页面</div>
+  <div class="banner-page">banner管理页面</div>
 </template>
 
 <script>
@@ -7,7 +7,8 @@ export default {
 
 }
 </script>
-
-<style>
-
+<style lang="scss" scoped>
+.banner-page{
+  padding: 30px;
+}
 </style>

@@ -13,6 +13,12 @@
 </template>
 
 <script>
+import {
+  getCategoryList,
+  addCategory,
+  updataCategoryInfo,
+  deleteCategory
+} from '@/api/category'
 export default {
   data() {
     return {
@@ -68,37 +74,72 @@ export default {
             label: '类别排序',
             prop: 'sort',
             span: 16,
-            row: true
+            row: true,
+            type: 'number'
           },
           {
             label: '创建时间',
-            prop: 'creatTime',
+            prop: 'createdAt',
             span: 16,
             row: true,
             display: false
           }
         ]
       },
-      categoryData: [
-        {
-          name: '衣服',
-          pic:
-            'https://wxt.sinaimg.cn/large/007XivJ0gy1g93mawj6coj30qn0qnabt.jpg',
-          sort: 1,
-          creatTime: '2020-08-17'
-        }
-      ]
+      categoryData: []
     }
   },
+  created() {
+    this.getCategoryData()
+  },
   methods: {
+    // 获取分类列表数据
+    getCategoryData() {
+      getCategoryList().then((res) => {
+        this.categoryData = res.data
+      })
+    },
     // 处理分页加载
     onLoad() {},
     // 添加分类保存
-    handleCategoryAddSave() {},
+    handleCategoryAddSave(row, done) {
+      setTimeout(() => {
+        addCategory(row).then(() => {
+          this.getCategoryData()
+          this.$message.success('添加成功')
+          done()
+        })
+      }, 1000)
+    },
     // 删除分类
-    handleCategoryDel() {},
+    handleCategoryDel(row) {
+      this.$confirm(`您确定要删除“${row.name}”该分类吗？`, '提示')
+        .then(() => {
+          deleteCategory(row._id).then(() => {
+            this.getCategoryData()
+            this.$message.success('删除成功')
+          })
+        })
+        .catch(() => {
+          console.log('您取消了操作')
+        })
+    },
     // 分类更新
-    handleCategoryUpdata() {}
+    handleCategoryUpdata(row, index, done) {
+      const data = {
+        _id: row._id,
+        name: row.name,
+        pic: row.pic,
+        sort: row.sort
+      }
+      setTimeout(() => {
+        updataCategoryInfo(data).then(() => {
+          this.getCategoryData()
+          this.$message.success('更新成功')
+          done()
+        })
+      }, 1000)
+    }
   }
 }
 </script>
