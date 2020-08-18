@@ -20,7 +20,6 @@ service.interceptors.request.use(
   },
   error => {
     // 请求失败
-    console.log(error) // for debug
     return Promise.reject(error)
   }
 )
@@ -67,7 +66,14 @@ service.interceptors.response.use(
     // }
   },
   error => {
-    console.log(error.response.data.message)
+    if (error.message === 'Network Error') {
+      Message({
+        message: '服务器连接超时！',
+        type: 'error',
+        duration: 5 * 1000
+      })
+      return Promise.reject(error)
+    }
     Message({
       message: error.response.data.message,
       type: 'error',
