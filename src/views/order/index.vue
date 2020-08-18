@@ -1,7 +1,12 @@
 <template>
   <div class="order-page">
-    <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="全部" name="first">
+    <el-tabs v-model="activeName" @tab-click="handleTabChange">
+      <el-tab-pane
+        v-for="(item,index) in tabOption"
+        :key="index"
+        :label="item.label"
+        :name="item.name"
+      >
         <el-row>
           <el-col :span="12" :xs="24">
             <el-button style="margin-right:10px" size="mini" type="primary">导出数据</el-button>
@@ -22,7 +27,7 @@
           <avue-form v-model="searchForm" :option="searchOption" />
         </el-card>
         <!-- 订单表格 -->
-        <avue-crud :option="orderOption" :data="orderData">
+        <avue-crud :option="orderOption" :data="orderData" :table-loading="loadding">
           <!-- 商品信息 -->
           <template slot="goodsInfo">
             <el-row>
@@ -77,9 +82,6 @@
           </template>
         </avue-crud>
       </el-tab-pane>
-      <el-tab-pane label="待付款" name="second">待付款</el-tab-pane>
-      <el-tab-pane label="待发货" name="third">待发货</el-tab-pane>
-      <el-tab-pane label="已发货" name="fourth">已发货</el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -88,13 +90,52 @@
 export default {
   data() {
     return {
-      activeName: 'first',
+      activeName: 'all',
+      loadding: false,
       searchForm: {
         num: '',
         time: '',
         name: '',
         phone: ''
       },
+      tabOption: [
+        {
+          name: 'all',
+          label: '全部'
+        },
+        {
+          name: 'wait-pay',
+          label: '待付款'
+        },
+        {
+          name: 'wait-send-goods',
+          label: '待发货'
+        },
+        {
+          name: 'wait-receiving-goods',
+          label: '待收货'
+        },
+        {
+          name: 'send-goods',
+          label: '已发货'
+        },
+        {
+          name: 'receiving-goods',
+          label: '已收货'
+        },
+        {
+          name: 'finish',
+          label: '已完成'
+        },
+        {
+          name: 'cancel',
+          label: '已取消'
+        },
+        {
+          name: 'refunding',
+          label: '退款中'
+        }
+      ],
       isOpenAdvancedSearch: false,
       searchOption: {
         submitText: '搜索',
@@ -187,8 +228,12 @@ export default {
     }
   },
   methods: {
-    handleClick(tab, event) {
-      console.log(tab, event)
+    handleTabChange(tab, event) {
+      this.loadding = true
+      setTimeout(() => {
+        this.loadding = false
+      }, 1000)
+      console.log(tab.name, event)
     }
   }
 }
