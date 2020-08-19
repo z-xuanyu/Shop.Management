@@ -12,17 +12,17 @@
             <el-button style="margin-right:10px" size="mini" type="primary">导出数据</el-button>
             <el-button size="mini" type="danger">批量删除</el-button>
           </el-col>
-          <el-col v-if="!isOpenAdvancedSearch" :span="12" :xs="24" style="text-align: right;">
+          <el-col v-show="!isOpenAdvancedSearch" :span="12" :xs="24" style="text-align: right;">
             <el-input size="mini" style="width:200px;margin-right:10px" placeholder="请输入搜索关键词" />
             <el-button style="margin-right:10px" size="mini" type="info">搜索</el-button>
-            <el-button size="mini" @click="isOpenAdvancedSearch = true">高级搜索</el-button>
+            <el-button size="mini" @click="handleOpenSearch">高级搜索</el-button>
           </el-col>
         </el-row>
         <!-- 高级搜索 -->
-        <el-card v-if="isOpenAdvancedSearch" class="advanced-search">
+        <el-card v-show="isOpenAdvancedSearch" class="advanced-search">
           <div slot="header" class="search-header">
             <span>高级搜索</span>
-            <span @click="isOpenAdvancedSearch = false">收起</span>
+            <span @click="handleCancelSearch">收起</span>
           </div>
           <avue-form v-model="searchForm" :option="searchOption" />
         </el-card>
@@ -234,6 +234,14 @@ export default {
         this.loadding = false
       }, 1000)
       console.log(tab.name, event)
+    },
+    // 处理展开搜索
+    handleOpenSearch() {
+      this.isOpenAdvancedSearch = true
+    },
+    // 关闭高级搜索
+    handleCancelSearch() {
+      this.isOpenAdvancedSearch = false
     }
   }
 }

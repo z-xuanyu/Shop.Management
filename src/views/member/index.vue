@@ -50,7 +50,7 @@
       >
         <!-- 改变默认地址 -->
         <template slot="isDefaule" slot-scope="scope">
-          <el-switch v-model="scope.row.isDefaule" />
+          <el-switch v-model="scope.row.isDefaule" @change="handleChangeDefauleAddress" />
         </template>
       </avue-crud>
       <span slot="footer" class="dialog-footer">
@@ -58,13 +58,62 @@
         <el-button size="small" type="primary" @click="showMemberAddress = false">确定</el-button>
       </span>
     </el-dialog>
+    <!-- 重置会员密码 -->
+    <el-dialog
+      v-dialogdrag
+      title="重置会员员密码"
+      :visible.sync="showResetPassword"
+      class="avue-dialog"
+      width="40%"
+    >
+      <el-form :model="newPasswordForm" label-width="70px">
+        <el-form-item
+          label="新密码"
+          prop="password"
+          :rules="[
+            { required: true, message: '新密码不能为空'}
+          ]"
+        >
+          <el-input
+            v-model="newPasswordForm.password"
+            style="width:80%"
+            type="password"
+            size="small"
+            autocomplete="off"
+          />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="showResetPassword = false">取消</el-button>
+        <el-button size="small" type="primary" @click="handleResetPasswordSubmit">确定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import {
+  getMemberList,
+  addMember,
+  updataMemberInfo,
+  deleteMember,
+  resetMemberPassword
+} from '@/api/member'
+import {
+  getMemberAddress,
+  addMemberAddress,
+  updataMemberAddressInfo,
+  deleteMemberAddress
+} from '@/api/memberAddress'
 export default {
   data() {
     return {
+      showResetPassword: false,
+      newPasswordForm: {
+        memberID: '',
+        password: ''
+      },
+      memberAddressForm: { userID: '' },
       showMemberAddress: false, // 显示会员收货地址 弹出层
       page: {
         pageSize: 20
@@ -263,53 +312,132 @@ export default {
             prop: 'isDefaule',
             span: 16,
             row: true,
+            type: 'switch',
             display: false,
-            slot: true
+            slot: true,
+            value: false
           }
         ]
       },
-      memberAddressData: [
-        {
-          name: '张国荣',
-          phone: '15800021934',
-          address: '广东省广州市天河区龙洞河陂南七巷一号',
-          postalCode: '520000',
-          isDefaule: false
-        }
-      ]
+      memberAddressData: []
     }
   },
+  created() {
+    this.getMemberListData()
+  },
   methods: {
-    // 会员收货地址
-    editMemberAddress() {
+    // 获取会员列表数据
+    getMemberListData() {
+      getMemberList().then((res) => {
+        this.memberData = res.data
+      })
+    },
+    // 获取会员收货地址列表数据
+    getMemberAddressListData() {
+      getMemberAddress({ userID: this.memberAddressForm.userID }).then(
+        (res) => {
+          this.memberAddressData = res.data
+        }
+      )
+    },
+    // 编辑会员收货地址
+    editMemberAddress(row) {
+      this.memberAddressForm.userID = row._id
+      this.getMemberAddressListData()
       this.showMemberAddress = true
     },
-    // 会员密码重置
-    handleResetPassword() {},
+    // 会员密码重置弹出层
+    handleResetPassword(row) {
+      this.newPasswordForm.memberID = row._id
+      this.showResetPassword = true
+    },
+    // 重置会员密码提交
+    handleResetPasswordSubmit() {
+      resetMemberPassword(this.newPasswordForm).then(() => {
+        this.getMemberListData()
+        this.showResetPassword = false
+        this.$message.success('密码重置成功')
+      })
+    },
     // 处理加载分页
     onLoad(page) {
       this.page.total = 40
     },
     // 会员添加保存
-    handleAddMemberSave() {},
+    handleAddMemberSave(row, done) {
+      setTimeout(() => {
+        addMember(row).then(() => {
+          this.getMemberListData()
+          this.$message.success('保存成功')
+          done()
+        })
+      }, 1000)
+    },
     // 删除会员
-    handleMemberDel() {},
+    handleMemberDel(row) {
+      this.$confirm(`您确定要删除“${row.name}”该会员吗？`, '提示')
+        .then(() => {
+          deleteMember(row._id).then(() => {
+            this.getMemberListData()
+            this.$message.success('删除成功!')
+          })
+        })
+        .catch(() => {
+          console.log('您取消了操作')
+        })
+    },
     // 更新会员信息
-    handleMemberUpdata() {},
+    handleMemberUpdata(row, index, done) {
+      delete row.$index
+      delete row.$gender
+      setTimeout(() => {
+        updataMemberInfo(row).then(() => {
+          this.getMemberListData()
+          this.$message.success('更新成功')
+          done()
+        })
+      }, 1000)
+    },
     // 添加会员收货地址保存
-    handleAddMemberAddressSave() {},
+    handleAddMemberAddressSave(row, done) {
+      setTimeout(() => {
+        addMemberAddress(Object.assign(this.memberAddressForm, row)).then(
+          () => {
+            this.getMemberAddressListData()
+            this.$message.success('添加成功')
+            done()
+          }
+        )
+      }, 1000)
+    },
     // 删除会员收货地
-    handleMemberAddressDel() {
+    handleMemberAddressDel(row) {
       this.$confirm(`您确定要删除该地址吗？`, '提示')
         .then(() => {
-          this.$message.success('删除成功!')
+          deleteMemberAddress(row._id).then(() => {
+            this.getMemberAddressListData()
+            this.$message.success('删除成功!')
+          })
         })
         .catch(() => {
           console.log('您取消了操作')
         })
     },
     // 更新会员收货地址信息
-    handleMemberAddressUpdata() {}
+    handleMemberAddressUpdata(row, index, done) {
+      delete row.$index
+      setTimeout(() => {
+        updataMemberAddressInfo(row).then(() => {
+          this.getMemberAddressListData()
+          this.$message.success('更新成功')
+          done()
+        })
+      }, 1000)
+    },
+    // 会员收货地址设置为默认
+    handleChangeDefauleAddress(value) {
+      console.log(value)
+    }
   }
 }
 </script>
