@@ -32,6 +32,13 @@
 </template>
 
 <script>
+import {
+  addTag,
+  getTagList,
+  updataTagInfo,
+  deleteTag,
+  changeTagStatus
+} from '@/api/tag'
 export default {
   data() {
     return {
@@ -71,33 +78,79 @@ export default {
           },
           {
             label: '创建时间',
-            prop: 'creatTime',
+            prop: 'createdAt',
             span: 16,
             row: true,
             display: false
           }
         ]
       },
-      tagData: [
-        {
-          name: '热销',
-          status: 1,
-          creatTime: '2020-08-17'
-        }
-      ]
+      tagData: []
     }
   },
+  created() {
+    this.getTagListData()
+  },
   methods: {
+    // 获取标签数据
+    getTagListData() {
+      getTagList().then((res) => {
+        this.tagData = res.data
+      })
+    },
     // 加载前
     onLoad() {},
     // 添加标签保存
-    handleAddTagSave() {},
+    handleAddTagSave(row, done) {
+      setTimeout(() => {
+        addTag(row).then(() => {
+          this.getTagListData()
+          this.$message.success('添加成功')
+          done()
+        })
+      }, 1000)
+    },
     // 删除标签
-    handleTagDel() {},
+    handleTagDel(row) {
+      this.$confirm(`您确定要删除“${row.name}”该标签吗？`, '提示')
+        .then(() => {
+          deleteTag(row._id).then(() => {
+            this.getTagListData()
+            this.$message.success('删除成功')
+          })
+        })
+        .catch(() => {
+          console.log('您取消了操作')
+        })
+    },
     // 更新标签信息
-    handleTagUpdata() {},
+    handleTagUpdata(row, index, done) {
+      const data = { _id: row._id, name: row.name }
+      setTimeout(() => {
+        updataTagInfo(data).then(() => {
+          this.getTagListData()
+          this.$message.success('更新成功')
+          done()
+        })
+      }, 1000)
+    },
     // 改变标签状态
-    handleTagStatus() {}
+    handleTagStatus(row) {
+      const data = { tagID: row._id, status: !row.status }
+      this.$confirm(
+        `您确定要“${row.status ? '禁用' : '启用'}”该标签吗？`,
+        '提示'
+      )
+        .then(() => {
+          changeTagStatus(data).then(() => {
+            this.getTagListData()
+            this.$message.success('状态更新成功')
+          })
+        })
+        .catch(() => {
+          console.log('您取消了操作')
+        })
+    }
   }
 }
 </script>
