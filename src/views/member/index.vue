@@ -50,7 +50,10 @@
       >
         <!-- 改变默认地址 -->
         <template slot="isDefaule" slot-scope="scope">
-          <el-switch v-model="scope.row.isDefaule" @change="handleChangeDefauleAddress" />
+          <el-switch
+            v-model="scope.row.isDefaule"
+            @change="handleChangeDefauleAddress($event,scope.row)"
+          />
         </template>
       </avue-crud>
       <span slot="footer" class="dialog-footer">
@@ -103,7 +106,8 @@ import {
   getMemberAddress,
   addMemberAddress,
   updataMemberAddressInfo,
-  deleteMemberAddress
+  deleteMemberAddress,
+  setDefaultAddress
 } from '@/api/memberAddress'
 export default {
   data() {
@@ -435,8 +439,16 @@ export default {
       }, 1000)
     },
     // 会员收货地址设置为默认
-    handleChangeDefauleAddress(value) {
-      console.log(value)
+    handleChangeDefauleAddress(value, row) {
+      const data = {
+        userID: this.memberAddressForm.userID,
+        addressID: row._id,
+        isDefaule: value
+      }
+      setDefaultAddress(data).then(() => {
+        this.getMemberAddressListData()
+        this.$message.success('设置成功')
+      })
     }
   }
 }
