@@ -18,6 +18,13 @@ export function getGoodsList(params) {
   })
 }
 
+// 获取商品信息
+export function getGoodsInfo(id) {
+  return request({
+    url: `commodities/${id}`
+  })
+}
+
 // 更新商品信息
 export function updataGoodsInfo(data) {
   return request({

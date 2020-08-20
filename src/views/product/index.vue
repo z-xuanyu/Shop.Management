@@ -4,11 +4,21 @@
     <el-row class="query">
       <el-col :span="8" :xs="24" :xl="8">
         <span>商品编号:</span>
-        <el-input v-model="query.num" size="small" style="width:70%" placeholder="请输入编号" />
+        <el-input
+          v-model="query.num"
+          size="small"
+          style="width:70%"
+          placeholder="请输入编号"
+        />
       </el-col>
       <el-col :span="8" :xs="24" :xl="8">
         <span>商品名称:</span>
-        <el-input v-model="query.name" size="small" style="width:70%" placeholder="请输入商品名称" />
+        <el-input
+          v-model="query.name"
+          size="small"
+          style="width:70%"
+          placeholder="请输入商品名称"
+        />
       </el-col>
       <el-col :span="8" :xs="24" :xl="8">
         <span>商品状态:</span>
@@ -56,7 +66,11 @@
       </el-col>
       <!-- 查询按钮 -->
       <el-col :span="12" :xs="24" class="query-btn">
-        <el-button style="margin-right:10px" size="small" type="primary">查询</el-button>
+        <el-button
+          style="margin-right:10px"
+          size="small"
+          type="primary"
+        >查询</el-button>
         <el-button size="small">重置</el-button>
       </el-col>
     </el-row>
@@ -69,7 +83,13 @@
     <!-- 商品列表 -->
     <div class="goods-list">
       <el-row>
-        <el-col v-for="(item,index) in goodsListData" :key="index" :span="12" :xl="8" :xs="24">
+        <el-col
+          v-for="(item, index) in goodsListData"
+          :key="index"
+          :span="12"
+          :xl="8"
+          :xs="24"
+        >
           <div class="goods-item">
             <div class="goods-info">
               <img :src="item.imgPathList[0]">
@@ -77,12 +97,20 @@
                 <div class="top">
                   <div class="title">{{ item.name }}</div>
                   <div class="tag">
-                    <el-tag size="mini" style="margin-right:10px" type="danger">推荐商品</el-tag>
+                    <el-tag
+                      size="mini"
+                      style="margin-right:10px"
+                      type="danger"
+                    >推荐商品</el-tag>
                     <el-tag size="mini">新品</el-tag>
                   </div>
                 </div>
                 <div class="goods-tag">
-                  <el-tag size="mini" style="margin-right:10px" type="success">液体</el-tag>
+                  <el-tag
+                    size="mini"
+                    style="margin-right:10px"
+                    type="success"
+                  >液体</el-tag>
                   <el-tag size="mini">热销</el-tag>
                 </div>
                 <div class="num">编号：202008181022</div>
@@ -99,24 +127,45 @@
               </div>
             </div>
             <div class="footer">
-              <div class="edit-goods" @click="handleEditGoods">编辑</div>
-              <div class="delete-goods" @click="handleDelGoods">删除</div>
+              <div class="edit-goods" @click="handleEditGoods(item)">编辑</div>
+              <div class="delete-goods" @click="handleDelGoods(item._id)">
+                删除
+              </div>
             </div>
           </div>
         </el-col>
       </el-row>
     </div>
     <!-- 添加商品 -->
-    <el-dialog title="添加商品" :visible.sync="showAddGoods" width="80%" class="avue-dialog">
-      <avue-form v-model="form" :option="option" @submit="handleAddGoodsSubmit" />
+    <el-dialog
+      title="添加商品"
+      :visible.sync="showAddGoods"
+      width="80%"
+      class="avue-dialog"
+    >
+      <avue-form
+        v-model="addForm"
+        :option="option"
+        @submit="handleAddGoodsSubmit"
+      />
     </el-dialog>
     <!-- 编辑商品 -->
-    <el-dialog title="添加商品" :visible.sync="showEditGoods" class="avue-dialog" />
+    <el-dialog
+      title="添加商品"
+      :visible.sync="showEditGoods"
+      class="avue-dialog"
+    >
+      <avue-form
+        v-model="editForm"
+        :option="option"
+        @submit="handleEditGoodsSubmit"
+      />
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { addGoods, getGoodsList } from '@/api/goods'
+import { addGoods, getGoodsList, deleteGoods, getGoodsInfo } from '@/api/goods'
 export default {
   data() {
     return {
@@ -142,7 +191,7 @@ export default {
         { label: '热销', value: 1 },
         { label: '火爆', value: 2 }
       ],
-      form: {
+      addForm: {
         bannerPathList: [],
         name: '',
         stock: null,
@@ -157,6 +206,7 @@ export default {
         desc: '',
         imgPathList: []
       },
+      editForm: null,
       option: {
         submitText: '确定',
         column: [
@@ -401,7 +451,7 @@ export default {
   methods: {
     // 获取商品列表
     getGoodsListData() {
-      getGoodsList().then((res) => {
+      getGoodsList().then(res => {
         this.goodsListData = res.data
       })
     },
@@ -427,12 +477,26 @@ export default {
       }, 1000)
     },
     // 编辑商品
-    handleEditGoods() {},
+    handleEditGoods(item) {
+      const id = item._id
+      getGoodsInfo(id).then(res => {
+        console.log(res)
+        this.editForm = res
+        this.showEditGoods = true
+      })
+    },
+    // 编辑商品修改提交
+    handleEditGoodsSubmit() {
+
+    },
     // 删除商品
-    handleDelGoods() {
+    handleDelGoods(id) {
       this.$confirm(`您确定要删除该商品吗？`, '提示')
         .then(() => {
-          this.$message.success('删除成功!')
+          deleteGoods(id).then(() => {
+            this.getGoodsListData()
+            this.$message.success('删除成功!')
+          })
         })
         .catch(() => {
           console.log('您取消了操作')
