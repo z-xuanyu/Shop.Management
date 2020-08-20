@@ -2,15 +2,15 @@
   <div class="product-page">
     <!-- 查询选择,输入框 -->
     <el-row class="query">
-      <el-col :span="12" :xs="24">
+      <el-col :span="8" :xs="24" :xl="8">
         <span>商品编号:</span>
         <el-input v-model="query.num" size="small" style="width:70%" placeholder="请输入编号" />
       </el-col>
-      <el-col :span="12" :xs="24">
+      <el-col :span="8" :xs="24" :xl="8">
         <span>商品名称:</span>
         <el-input v-model="query.name" size="small" style="width:70%" placeholder="请输入商品名称" />
       </el-col>
-      <el-col :span="12" :xs="24">
+      <el-col :span="8" :xs="24" :xl="8">
         <span>商品状态:</span>
         <avue-select
           v-model="query.status"
@@ -21,7 +21,7 @@
           :dic="statusDic"
         />
       </el-col>
-      <el-col :span="12" :xs="24">
+      <el-col :span="8" :xs="24" :xl="8">
         <span>商品类别:</span>
         <avue-select
           v-model="query.categoryID"
@@ -32,8 +32,19 @@
           :dic="categoryDic"
         />
       </el-col>
-      <el-col :span="12" :xs="24">
+      <el-col :span="8" :xs="24" :xl="8">
         <span>商品标签:</span>
+        <avue-select
+          v-model="query.tagID"
+          size="small"
+          style="width:70%"
+          placeholder="请选择商品标签"
+          type="tree"
+          :dic="tagDic"
+        />
+      </el-col>
+      <el-col :span="8" :xs="24" :xl="8">
+        <span>推荐商品:</span>
         <avue-select
           v-model="query.tagID"
           size="small"
@@ -51,22 +62,20 @@
     </el-row>
 
     <!-- 添加商品 -->
-    <div class="add-good">
+    <div class="add-good" @click="handleShowAddGoods">
       <i class="el-icon-plus" />
       <span>添加商品</span>
     </div>
     <!-- 商品列表 -->
     <div class="goods-list">
       <el-row>
-        <el-col v-for="item in 6" :key="item" :span="12">
+        <el-col v-for="(item,index) in goodsListData" :key="index" :span="12" :xl="8" :xs="24">
           <div class="goods-item">
             <div class="goods-info">
-              <img
-                src="https://alpsimpleshop.blob.core.windows.net/images/commodity/c3d7b38ec7ef442ca0cba6bc607733b1.jpg"
-              >
+              <img :src="item.imgPathList[0]">
               <div class="right">
                 <div class="top">
-                  <div class="title">皇家族纪念品</div>
+                  <div class="title">{{ item.name }}</div>
                   <div class="tag">
                     <el-tag size="mini" style="margin-right:10px" type="danger">推荐商品</el-tag>
                     <el-tag size="mini">新品</el-tag>
@@ -78,11 +87,11 @@
                 </div>
                 <div class="num">编号：202008181022</div>
                 <div class="price">
-                  <span>单价：￥299</span>
-                  <span>折扣价：￥159</span>
-                  <span>库存：99</span>
+                  <span>单价：￥{{ item.price }}</span>
+                  <span>折扣价：￥{{ item.discountPrice }}</span>
+                  <span>库存：{{ item.stock }}</span>
                 </div>
-                <div class="desc">商品描述定金十说定金十九点就的角商品描述说定金十九点就的角色商品描述说定金十九点就的角色色</div>
+                <div class="desc">{{ item.desc }}</div>
                 <!-- 下架，在售 -->
                 <div class="status">
                   <el-tag size="mini" effect="dark">在售</el-tag>
@@ -98,13 +107,22 @@
       </el-row>
     </div>
     <!-- 添加商品 -->
+    <el-dialog title="添加商品" :visible.sync="showAddGoods" width="80%" class="avue-dialog">
+      <avue-form v-model="form" :option="option" @submit="handleAddGoodsSubmit" />
+    </el-dialog>
+    <!-- 编辑商品 -->
+    <el-dialog title="添加商品" :visible.sync="showEditGoods" class="avue-dialog" />
   </div>
 </template>
 
 <script>
+import { addGoods, getGoodsList } from '@/api/goods'
 export default {
   data() {
     return {
+      showAddGoods: false,
+      showEditGoods: false,
+      goodsListData: [],
       query: {
         name: '皇家族纪念品',
         num: '20200820153',
@@ -123,10 +141,291 @@ export default {
       tagDic: [
         { label: '热销', value: 1 },
         { label: '火爆', value: 2 }
-      ]
+      ],
+      form: {
+        bannerPathList: [],
+        name: '',
+        stock: null,
+        price: null,
+        discountPrice: null,
+        categories: '',
+        unit: '',
+        tags: [],
+        isRecommend: null,
+        isNewes: null,
+        status: null,
+        desc: '',
+        imgPathList: []
+      },
+      option: {
+        submitText: '确定',
+        column: [
+          {
+            label: '轮播图',
+            prop: 'bannerPathList',
+            type: 'upload',
+            span: 24,
+            dataType: 'array',
+            listType: 'picture-card',
+            tip: '只能上传jpg/png文件，且不超过500kb',
+            propsHttp: {
+              url: 'url'
+            },
+            action: 'avatarUpload',
+            rules: [
+              {
+                required: true,
+                message: '轮播图不能为空',
+                trigger: 'blur'
+              }
+            ]
+          },
+          {
+            label: '名称',
+            prop: 'name',
+            span: 12,
+            rules: [
+              {
+                required: true,
+                message: '名称不能为空',
+                trigger: 'blur'
+              }
+            ]
+          },
+          {
+            label: '库存',
+            prop: 'stock',
+            type: 'number',
+            span: 6,
+            rules: [
+              {
+                required: true,
+                message: '库存不能为空',
+                trigger: 'blur'
+              }
+            ]
+          },
+          {
+            label: '定价',
+            prop: 'price',
+            span: 6,
+            type: 'number',
+            rules: [
+              {
+                required: true,
+                message: '定价不能为空',
+                trigger: 'blur'
+              }
+            ]
+          },
+          {
+            label: '类别',
+            prop: 'categories',
+            span: 12,
+            type: 'select',
+            dicUrl: 'categories/list',
+            props: {
+              label: 'name',
+              value: '_id'
+            },
+            rules: [
+              {
+                required: true,
+                message: '类别不能为空',
+                trigger: 'blur'
+              }
+            ]
+          },
+          {
+            label: '折扣价',
+            prop: 'discountPrice',
+            span: 6,
+            type: 'number',
+            rules: [
+              {
+                required: true,
+                message: '折扣价不能为空',
+                trigger: 'blur'
+              }
+            ]
+          },
+          {
+            label: '单位',
+            prop: 'unit',
+            span: 6,
+            type: 'select',
+            dicUrl: 'unit/list',
+            props: {
+              label: 'name',
+              value: '_id'
+            },
+            rules: [
+              {
+                required: true,
+                message: '单位不能为空',
+                trigger: 'blur'
+              }
+            ]
+          },
+          {
+            label: '标签',
+            prop: 'tags',
+            span: 12,
+            type: 'select',
+            multiple: true,
+            dicUrl: 'tags/list',
+            props: {
+              label: 'name',
+              value: '_id'
+            },
+            rules: [
+              {
+                required: true,
+                message: '标签不能为空',
+                trigger: 'blur'
+              }
+            ]
+          },
+          {
+            label: '推荐',
+            prop: 'isRecommend',
+            span: 6,
+            type: 'select',
+            dicData: [
+              {
+                label: '是',
+                value: true
+              },
+              {
+                label: '否',
+                value: false
+              }
+            ],
+            rules: [
+              {
+                required: true,
+                message: '推荐不能为空',
+                trigger: 'blur'
+              }
+            ]
+          },
+          {
+            label: '新品',
+            prop: 'isNewes',
+            span: 6,
+            type: 'select',
+            dicData: [
+              {
+                label: '是',
+                value: true
+              },
+              {
+                label: '否',
+                value: false
+              }
+            ],
+            rules: [
+              {
+                required: true,
+                message: '新品不能为空',
+                trigger: 'blur'
+              }
+            ]
+          },
+          {
+            label: '状态',
+            prop: 'status',
+            span: 6,
+            type: 'select',
+            dicData: [
+              {
+                label: '在售',
+                value: 1
+              },
+              {
+                label: '下架',
+                value: 2
+              }
+            ],
+            rules: [
+              {
+                required: true,
+                message: '状态不能为空',
+                trigger: 'blur'
+              }
+            ]
+          },
+          {
+            label: '商品描述',
+            prop: 'desc',
+            type: 'textarea',
+            minRows: 5,
+            maxlength: 200,
+            span: 24,
+            showWordLimit: true,
+            rules: [
+              {
+                required: true,
+                message: '商品描述不能为空',
+                trigger: 'blur'
+              }
+            ]
+          },
+          {
+            label: '详情图',
+            prop: 'imgPathList',
+            type: 'upload',
+            dataType: 'array',
+            span: 24,
+            listType: 'picture-card',
+            tip: '只能上传jpg/png文件，且不超过500kb',
+            propsHttp: {
+              url: 'url'
+            },
+            action: 'avatarUpload',
+            rules: [
+              {
+                required: true,
+                message: '商品详情图不能为空',
+                trigger: 'blur'
+              }
+            ]
+          }
+        ]
+      }
     }
   },
+  created() {
+    this.getGoodsListData()
+  },
   methods: {
+    // 获取商品列表
+    getGoodsListData() {
+      getGoodsList().then((res) => {
+        this.goodsListData = res.data
+      })
+    },
+    // 显示添加商品弹出层
+    handleShowAddGoods() {
+      this.showAddGoods = true
+    },
+    // 添加商品提交
+    handleAddGoodsSubmit(row, done) {
+      delete row.$categories
+      delete row.$isNewes
+      delete row.$isRecommend
+      delete row.$status
+      delete row.$tags
+      delete row.$unit
+      setTimeout(() => {
+        addGoods(row).then(() => {
+          this.getGoodsListData()
+          done()
+          this.showAddGoods = false
+          this.$message.success('添加成功')
+        })
+      }, 1000)
+    },
     // 编辑商品
     handleEditGoods() {},
     // 删除商品
@@ -187,8 +486,8 @@ export default {
       padding: 20px;
       .goods-item {
         background-color: #ffffff;
-        &:hover{
-          box-shadow: 10px 10px 10px rgba(0,0,0,.1);
+        &:hover {
+          box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.1);
           transform: translateY(-5px) scale(1.05);
           transition: all 0.2s ease-in;
           border-radius: 5px;

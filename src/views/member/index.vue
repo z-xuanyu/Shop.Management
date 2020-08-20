@@ -196,7 +196,8 @@ export default {
             span: 16,
             row: true,
             slot: true,
-            type: 'select',
+            type: 'radio',
+            button: true,
             dicData: [
               {
                 label: '男',
