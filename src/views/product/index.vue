@@ -1,80 +1,9 @@
 <template>
   <div class="product-page">
     <!-- 查询选择,输入框 -->
-    <el-row class="query">
-      <el-col :span="8" :xs="24" :xl="8">
-        <span>商品编号:</span>
-        <el-input
-          v-model="query.num"
-          size="small"
-          style="width:70%"
-          placeholder="请输入编号"
-        />
-      </el-col>
-      <el-col :span="8" :xs="24" :xl="8">
-        <span>商品名称:</span>
-        <el-input
-          v-model="query.name"
-          size="small"
-          style="width:70%"
-          placeholder="请输入商品名称"
-        />
-      </el-col>
-      <el-col :span="8" :xs="24" :xl="8">
-        <span>商品状态:</span>
-        <avue-select
-          v-model="query.status"
-          style="width:70%"
-          size="small"
-          placeholder="请选择商品状态"
-          type="tree"
-          :dic="statusDic"
-        />
-      </el-col>
-      <el-col :span="8" :xs="24" :xl="8">
-        <span>商品类别:</span>
-        <avue-select
-          v-model="query.categoryID"
-          size="small"
-          style="width:70%"
-          placeholder="请选择商品类别"
-          type="tree"
-          :dic="categoryDic"
-        />
-      </el-col>
-      <el-col :span="8" :xs="24" :xl="8">
-        <span>商品标签:</span>
-        <avue-select
-          v-model="query.tagID"
-          size="small"
-          style="width:70%"
-          placeholder="请选择商品标签"
-          type="tree"
-          :dic="tagDic"
-        />
-      </el-col>
-      <el-col :span="8" :xs="24" :xl="8">
-        <span>推荐商品:</span>
-        <avue-select
-          v-model="query.tagID"
-          size="small"
-          style="width:70%"
-          placeholder="请选择商品标签"
-          type="tree"
-          :dic="tagDic"
-        />
-      </el-col>
-      <!-- 查询按钮 -->
-      <el-col :span="12" :xs="24" class="query-btn">
-        <el-button
-          style="margin-right:10px"
-          size="small"
-          type="primary"
-        >查询</el-button>
-        <el-button size="small">重置</el-button>
-      </el-col>
-    </el-row>
-
+    <div class="query">
+      <avue-form v-model="queryForm" :option="queryOption" @submit="handleAddGoodsSubmit" />
+    </div>
     <!-- 添加商品 -->
     <div class="add-good" @click="handleShowAddGoods">
       <i class="el-icon-plus" />
@@ -83,13 +12,7 @@
     <!-- 商品列表 -->
     <div class="goods-list">
       <el-row>
-        <el-col
-          v-for="(item, index) in goodsListData"
-          :key="index"
-          :span="12"
-          :xl="8"
-          :xs="24"
-        >
+        <el-col v-for="(item, index) in goodsListData" :key="index" :span="12" :xl="8" :xs="24">
           <div class="goods-item">
             <div class="goods-info">
               <img :src="item.imgPathList[0]">
@@ -97,21 +20,19 @@
                 <div class="top">
                   <div class="title">{{ item.name }}</div>
                   <div class="tag">
-                    <el-tag
-                      size="mini"
-                      style="margin-right:10px"
-                      type="danger"
-                    >推荐商品</el-tag>
-                    <el-tag size="mini">新品</el-tag>
+                    <el-tag size="mini" style="margin-right:10px" type="danger">推荐商品</el-tag>
+                    <el-tag v-if="item.isNewest === 1" size="mini">新品</el-tag>
                   </div>
                 </div>
                 <div class="goods-tag">
                   <el-tag
+                    v-for="(tagItem,tagIndex) in item.tags"
+                    :key="tagIndex"
                     size="mini"
                     style="margin-right:10px"
-                    type="success"
-                  >液体</el-tag>
-                  <el-tag size="mini">热销</el-tag>
+                    type="danger"
+                    effect="dark"
+                  >{{ tagItem.name }}</el-tag>
                 </div>
                 <div class="num">编号：202008181022</div>
                 <div class="price">
@@ -122,75 +43,104 @@
                 <div class="desc">{{ item.desc }}</div>
                 <!-- 下架，在售 -->
                 <div class="status">
-                  <el-tag size="mini" effect="dark">在售</el-tag>
+                  <el-tag size="mini" effect="dark">{{ item.status == 1?'在售':'下架' }}</el-tag>
                 </div>
               </div>
             </div>
             <div class="footer">
               <div class="edit-goods" @click="handleEditGoods(item)">编辑</div>
-              <div class="delete-goods" @click="handleDelGoods(item._id)">
-                删除
-              </div>
+              <div class="delete-goods" @click="handleDelGoods(item._id)">删除</div>
             </div>
           </div>
         </el-col>
       </el-row>
     </div>
     <!-- 添加商品 -->
-    <el-dialog
-      title="添加商品"
-      :visible.sync="showAddGoods"
-      width="80%"
-      class="avue-dialog"
-    >
-      <avue-form
-        v-model="addForm"
-        :option="option"
-        @submit="handleAddGoodsSubmit"
-      />
+    <el-dialog title="添加商品" :visible.sync="showAddGoods" width="80%" class="avue-dialog">
+      <avue-form v-model="addForm" :option="option" @submit="handleAddGoodsSubmit" />
     </el-dialog>
     <!-- 编辑商品 -->
-    <el-dialog
-      title="添加商品"
-      :visible.sync="showEditGoods"
-      class="avue-dialog"
-    >
-      <avue-form
-        v-model="editForm"
-        :option="option"
-        @submit="handleEditGoodsSubmit"
-      />
+    <el-dialog title="编辑商品" :visible.sync="showEditGoods" class="avue-dialog" width="80%">
+      <avue-form v-model="editForm" :option="option" @submit="handleEditGoodsSubmit" />
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { addGoods, getGoodsList, deleteGoods, getGoodsInfo } from '@/api/goods'
+import {
+  addGoods,
+  getGoodsList,
+  deleteGoods,
+  getGoodsInfo,
+  updataGoodsInfo
+} from '@/api/goods'
 export default {
   data() {
     return {
       showAddGoods: false,
       showEditGoods: false,
       goodsListData: [],
-      query: {
-        name: '皇家族纪念品',
-        num: '20200820153',
-        status: 1,
-        categoryID: 1,
-        tagID: 1
+      queryForm: {
+        name: '',
+        num: '',
+        status: null,
+        categoryID: null,
+        tagID: null
       },
-      statusDic: [
-        { label: '在售', value: 1 },
-        { label: '已下架', value: 2 }
-      ],
-      categoryDic: [
-        { label: '衣服', value: 1 },
-        { label: '手机', value: 2 }
-      ],
-      tagDic: [
-        { label: '热销', value: 1 },
-        { label: '火爆', value: 2 }
-      ],
+      queryOption: {
+        submitText: '搜索',
+        column: [
+          {
+            label: '商品编号',
+            prop: 'num',
+            span: 8
+          },
+          {
+            label: '商品名称',
+            prop: 'name',
+            span: 8
+          },
+          {
+            label: '商品状态',
+            prop: 'status',
+            type: 'select',
+            dicData: [
+              {
+                label: '在售',
+                value: 1
+              },
+              {
+                label: '下架',
+                value: 2
+              }
+            ],
+            span: 8
+          },
+          {
+            label: '商品类别',
+            prop: 'categoryID',
+            span: 8,
+            type: 'select',
+            dicUrl: 'categories/list',
+            props: {
+              label: 'name',
+              value: '_id'
+            }
+          },
+          {
+            label: '商品标签',
+            prop: 'tagID',
+            span: 8,
+            type: 'select',
+            multiple: true,
+            dicUrl: 'tags/list',
+            props: {
+              label: 'name',
+              value: '_id'
+            }
+          }
+        ]
+      },
       addForm: {
         bannerPathList: [],
         name: '',
@@ -201,7 +151,7 @@ export default {
         unit: '',
         tags: [],
         isRecommend: null,
-        isNewes: null,
+        isNewest: null,
         status: null,
         desc: '',
         imgPathList: []
@@ -344,11 +294,11 @@ export default {
             dicData: [
               {
                 label: '是',
-                value: true
+                value: 1
               },
               {
                 label: '否',
-                value: false
+                value: 2
               }
             ],
             rules: [
@@ -361,17 +311,17 @@ export default {
           },
           {
             label: '新品',
-            prop: 'isNewes',
+            prop: 'isNewest',
             span: 6,
             type: 'select',
             dicData: [
               {
                 label: '是',
-                value: true
+                value: 1
               },
               {
                 label: '否',
-                value: false
+                value: 2
               }
             ],
             rules: [
@@ -451,7 +401,7 @@ export default {
   methods: {
     // 获取商品列表
     getGoodsListData() {
-      getGoodsList().then(res => {
+      getGoodsList().then((res) => {
         this.goodsListData = res.data
       })
     },
@@ -462,7 +412,7 @@ export default {
     // 添加商品提交
     handleAddGoodsSubmit(row, done) {
       delete row.$categories
-      delete row.$isNewes
+      delete row.$isNewest
       delete row.$isRecommend
       delete row.$status
       delete row.$tags
@@ -479,15 +429,27 @@ export default {
     // 编辑商品
     handleEditGoods(item) {
       const id = item._id
-      getGoodsInfo(id).then(res => {
-        console.log(res)
+      getGoodsInfo(id).then((res) => {
         this.editForm = res
         this.showEditGoods = true
       })
     },
     // 编辑商品修改提交
-    handleEditGoodsSubmit() {
-
+    handleEditGoodsSubmit(row, done) {
+      delete row.$categories
+      delete row.$isNewest
+      delete row.$isRecommend
+      delete row.$status
+      delete row.$tags
+      delete row.$unit
+      setTimeout(() => {
+        updataGoodsInfo(row).then(() => {
+          this.getGoodsListData()
+          done()
+          this.showEditGoods = false
+          this.$message.success('更新成功')
+        })
+      }, 1000)
     },
     // 删除商品
     handleDelGoods(id) {
@@ -566,12 +528,20 @@ export default {
           .right {
             padding: 10px;
             position: relative;
+            overflow: hidden;
             .top {
               width: 90%;
               display: flex;
               margin-bottom: 10px;
               .title {
                 margin-right: 5px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+              }
+              .tag {
+                display: flex;
+                margin-right: 10px;
               }
             }
             .goods-tag {
@@ -593,6 +563,10 @@ export default {
             .desc {
               color: #999999;
               font-size: 14px;
+              display: -webkit-box;
+              -webkit-box-orient: vertical;
+              -webkit-line-clamp: 3;
+              overflow: hidden;
             }
             .status {
               position: absolute;
