@@ -106,7 +106,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'category',
         component: () => import('@/views/category/index'),
-        meta: { title: '类别管理', icon: 'el-icon-collection', roles: ['admin', 'edit'] }
+        meta: { title: '类别管理', icon: 'el-icon-collection' }
       }
     ]
   },
@@ -118,7 +118,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'tag',
         component: () => import('@/views/tag/index'),
-        meta: { title: '标签管理', icon: 'el-icon-collection-tag', roles: ['admin', 'edit'] }
+        meta: { title: '标签管理', icon: 'el-icon-collection-tag' }
       }
     ]
 
@@ -131,7 +131,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'order',
         component: () => import('@/views/order/index'),
-        meta: { title: '订单管理', icon: 'el-icon-s-order', roles: ['admin', 'edit'] }
+        meta: { title: '订单管理', icon: 'el-icon-s-order' }
       }
     ]
 
@@ -144,7 +144,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'product',
         component: () => import('@/views/product/index'),
-        meta: { title: '商品管理', icon: 'el-icon-s-goods', roles: ['admin', 'edit'] }
+        meta: { title: '商品管理', icon: 'el-icon-s-goods' }
       }
     ]
 
@@ -157,7 +157,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'member',
         component: () => import('@/views/member/index'),
-        meta: { title: '会员管理', icon: 'el-icon-s-custom', roles: ['admin', 'edit'] }
+        meta: { title: '会员管理', icon: 'el-icon-s-custom' }
       }
     ]
   },
@@ -181,7 +181,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'banner',
         component: () => import('@/views/banner/index'),
-        meta: { title: 'Banner管理', icon: 'el-icon-picture', roles: ['admin', 'edit'] }
+        meta: { title: 'Banner管理', icon: 'el-icon-picture' }
       }
     ]
 
