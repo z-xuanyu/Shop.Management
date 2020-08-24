@@ -1,86 +1,88 @@
 <template>
   <div class="order-page">
-    <el-tabs v-model="activeName" @tab-click="handleTabChange">
+    <el-tabs v-model="activeName" type="border-card" @tab-click="handleTabChange">
       <el-tab-pane
         v-for="(item,index) in tabOption"
         :key="index"
         :label="item.label"
         :name="item.name"
       >
-        <el-row>
-          <el-col :span="12" :xs="24">
-            <el-button style="margin-right:10px" size="mini" type="primary">导出数据</el-button>
-            <el-button size="mini" type="danger">批量删除</el-button>
-          </el-col>
-          <el-col v-show="!isOpenAdvancedSearch" :span="12" :xs="24" style="text-align: right;">
-            <el-input size="mini" style="width:200px;margin-right:10px" placeholder="请输入搜索关键词" />
-            <el-button style="margin-right:10px" size="mini" type="info">搜索</el-button>
-            <el-button size="mini" @click="handleOpenSearch">高级搜索</el-button>
-          </el-col>
-        </el-row>
-        <!-- 高级搜索 -->
-        <el-card v-show="isOpenAdvancedSearch" class="advanced-search">
-          <div slot="header" class="search-header">
-            <span>高级搜索</span>
-            <span @click="handleCancelSearch">收起</span>
-          </div>
-          <avue-form v-model="searchForm" :option="searchOption" />
-        </el-card>
-        <!-- 订单表格 -->
-        <avue-crud :option="orderOption" :data="orderData" :table-loading="loadding">
-          <!-- 商品信息 -->
-          <template slot="goodsInfo">
-            <el-row>
-              <el-col :span="12">
-                <span>订单编号:</span>
-                <div style="font-weight: 600;">202008181515</div>
-              </el-col>
-              <el-col :span="12">
-                <span>下单时间:</span>
-                <div style="font-weight: 600;">2020-08-18 18:30</div>
-              </el-col>
-            </el-row>
-            <el-row>
-              <el-col :span="8">
-                <img
-                  width="60px"
-                  height="60px"
-                  src="https://m.360buyimg.com/babel/jfs/t1/116009/18/12401/112831/5f0ff020Eef4700e2/051b7cb8da2d8d5a.jpg!q70.jpg"
-                  alt
-                >
-              </el-col>
-              <el-col class="goods-title" :span="16">OPPO Reno4 超级夜景视频 65W超级闪充 视频超级防抖</el-col>
-            </el-row>
-          </template>
-          <!-- 实付款 -->
-          <template slot="actualPayment">
-            <span>￥4399</span>
-            <p>(含运费:￥0.00)</p>
-          </template>
-          <!-- 支付方式 -->
-          <template slot="paymentMode">
-            <el-tag size="mini" type="success" effect="dark">微信支付</el-tag>
-          </template>
-          <!-- 交易状态 -->
-          <template slot="status">
-            <div style="margin-bottom:5px">
-              <span style="margin-right:5px">付款状态:</span>
-              <el-tag size="mini" effect="dark">已支付</el-tag>
+        <div v-if="activeName == item.name" class="content-warpper">
+          <el-row>
+            <el-col :span="12" :xs="24">
+              <el-button style="margin-right:10px" size="mini" type="primary">导出数据</el-button>
+              <el-button size="mini" type="danger">批量删除</el-button>
+            </el-col>
+            <el-col v-show="!isOpenAdvancedSearch" :span="12" :xs="24" style="text-align: right;">
+              <el-input size="mini" style="width:200px;margin-right:10px" placeholder="请输入搜索关键词" />
+              <el-button style="margin-right:10px" size="mini" type="info">搜索</el-button>
+              <el-button size="mini" @click="handleOpenSearch">高级搜索</el-button>
+            </el-col>
+          </el-row>
+          <!-- 高级搜索 -->
+          <el-card v-show="isOpenAdvancedSearch" class="advanced-search">
+            <div slot="header" class="search-header">
+              <span>高级搜索</span>
+              <span @click="handleCancelSearch">收起</span>
             </div>
-            <div style="margin-bottom:5px">
-              <span style="margin-right:5px">发货状态:</span>
-              <el-tag size="mini" type="info" effect="dark">待发货</el-tag>
-            </div>
-            <div style="margin-bottom:5px">
-              <span style="margin-right:5px">收货状态:</span>
-              <el-tag size="mini" type="info" effect="dark">待收货</el-tag>
-            </div>
-          </template>
-          <!-- 查看订单详情 -->
-          <template slot="menu">
-            <el-button type="primary" size="small" plain>订单详情</el-button>
-          </template>
-        </avue-crud>
+            <avue-form v-model="searchForm" :option="searchOption" />
+          </el-card>
+          <!-- 订单表格 -->
+          <avue-crud :option="orderOption" :data="orderData" :table-loading="loadding">
+            <!-- 商品信息 -->
+            <template slot="goodsInfo">
+              <el-row>
+                <el-col :span="12">
+                  <span>订单编号:</span>
+                  <div style="font-weight: 600;">202008181515</div>
+                </el-col>
+                <el-col :span="12">
+                  <span>下单时间:</span>
+                  <div style="font-weight: 600;">2020-08-18 18:30</div>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="8">
+                  <img
+                    width="60px"
+                    height="60px"
+                    src="https://m.360buyimg.com/babel/jfs/t1/116009/18/12401/112831/5f0ff020Eef4700e2/051b7cb8da2d8d5a.jpg!q70.jpg"
+                    alt
+                  >
+                </el-col>
+                <el-col class="goods-title" :span="16">OPPO Reno4 超级夜景视频 65W超级闪充 视频超级防抖</el-col>
+              </el-row>
+            </template>
+            <!-- 实付款 -->
+            <template slot="actualPayment">
+              <span>￥4399</span>
+              <p>(含运费:￥0.00)</p>
+            </template>
+            <!-- 支付方式 -->
+            <template slot="paymentMode">
+              <el-tag size="mini" type="success" effect="dark">微信支付</el-tag>
+            </template>
+            <!-- 交易状态 -->
+            <template slot="status">
+              <div style="margin-bottom:5px">
+                <span style="margin-right:5px">付款状态:</span>
+                <el-tag size="mini" effect="dark">已支付</el-tag>
+              </div>
+              <div style="margin-bottom:5px">
+                <span style="margin-right:5px">发货状态:</span>
+                <el-tag size="mini" type="info" effect="dark">待发货</el-tag>
+              </div>
+              <div style="margin-bottom:5px">
+                <span style="margin-right:5px">收货状态:</span>
+                <el-tag size="mini" type="info" effect="dark">待收货</el-tag>
+              </div>
+            </template>
+            <!-- 查看订单详情 -->
+            <template slot="menu">
+              <el-button type="primary" size="small" plain>订单详情</el-button>
+            </template>
+          </avue-crud>
+        </div>
       </el-tab-pane>
     </el-tabs>
   </div>
