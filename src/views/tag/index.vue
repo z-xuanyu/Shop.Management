@@ -12,20 +12,24 @@
       <!-- 状态 -->
       <template slot="status" slot-scope="scope">
         <el-tag
-          :type="scope.row.status == 1?'success':'danger'"
+          :type="scope.row.status == 1 ? 'success' : 'danger'"
           effect="plain"
           size="small"
-        >{{ scope.row.status == 1?'启用':'禁用' }}</el-tag>
+        >{{ scope.row.status == 1 ? "启用" : "禁用" }}</el-tag>
+      </template>
+      <!-- 时间 -->
+      <template slot="createdAt" slot-scope="scope">
+        {{ scope.row.createdAt | dateFormat }}
       </template>
       <!-- 操作栏 -->
-      <template slot="menu" slot-scope="{type,size,row}">
+      <template slot="menu" slot-scope="{ type, size, row }">
         <el-button
           icon="el-icon-refresh"
           :size="size"
           :type="type"
-          :style="{color:row.status == 1?'red':''}"
+          :style="{ color: row.status == 1 ? 'red' : '' }"
           @click="handleTagStatus(row)"
-        >{{ row.status == 1?'禁用':'启用' }}</el-button>
+        >{{ row.status == 1 ? "禁用" : "启用" }}</el-button>
       </template>
     </avue-crud>
   </div>
@@ -81,6 +85,7 @@ export default {
             prop: 'createdAt',
             span: 16,
             row: true,
+            slot: true,
             display: false
           }
         ]
