@@ -33,3 +33,12 @@ export function deleteCategory(id) {
     method: 'delete'
   })
 }
+
+// 添加二级分类
+export function addSubCategory(data) {
+  return request({
+    url: 'subCategory/add',
+    method: 'post',
+    data
+  })
+}

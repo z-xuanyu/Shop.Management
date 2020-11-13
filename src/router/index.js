@@ -111,6 +111,18 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/category/test',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'test',
+        component: () => import('@/views/category/test.vue'),
+        meta: { title: 'test分类', icon: 'el-icon-collection' }
+      }
+    ]
+  },
+  {
     path: '/tag',
     component: Layout,
     children: [
