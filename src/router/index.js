@@ -124,6 +124,19 @@ export const asyncRoutes = [
 
   },
   {
+    path: '/unit',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'unit',
+        component: () => import('@/views/unit/index'),
+        meta: { title: '单位管理', icon: 'el-icon-collection-tag' }
+      }
+    ]
+
+  },
+  {
     path: '/order',
     component: Layout,
     children: [

@@ -2,7 +2,11 @@
   <div class="product-page">
     <!-- 查询选择,输入框 -->
     <div class="query">
-      <avue-form v-model="queryForm" :option="queryOption" @submit="handleAddGoodsSubmit" />
+      <avue-form
+        v-model="queryForm"
+        :option="queryOption"
+        @submit="handleQuerySubmit"
+      />
     </div>
     <!-- 添加商品 -->
     <div class="add-good" @click="handleShowAddGoods">
@@ -12,7 +16,13 @@
     <!-- 商品列表 -->
     <div class="goods-list">
       <el-row>
-        <el-col v-for="(item, index) in goodsListData" :key="index" :span="12" :xl="8" :xs="24">
+        <el-col
+          v-for="(item, index) in goodsListData"
+          :key="index"
+          :span="12"
+          :xl="8"
+          :xs="24"
+        >
           <div class="goods-item">
             <div class="goods-info">
               <img :src="item.imgPathList[0]">
@@ -20,16 +30,20 @@
                 <div class="top">
                   <div class="title">{{ item.name }}</div>
                   <div class="tag">
-                    <el-tag size="mini" style="margin-right:10px" type="danger">推荐商品</el-tag>
+                    <el-tag
+                      size="mini"
+                      style="margin-right: 10px"
+                      type="danger"
+                    >推荐商品</el-tag>
                     <el-tag v-if="item.isNewest === 1" size="mini">新品</el-tag>
                   </div>
                 </div>
                 <div class="goods-tag">
                   <el-tag
-                    v-for="(tagItem,tagIndex) in item.tags"
+                    v-for="(tagItem, tagIndex) in item.tags"
                     :key="tagIndex"
                     size="mini"
-                    style="margin-right:10px"
+                    style="margin-right: 10px"
                     type="danger"
                     effect="dark"
                   >{{ tagItem.name }}</el-tag>
@@ -43,25 +57,47 @@
                 <div class="desc">{{ item.desc }}</div>
                 <!-- 下架，在售 -->
                 <div class="status">
-                  <el-tag size="mini" effect="dark">{{ item.status == 1?'在售':'下架' }}</el-tag>
+                  <el-tag size="mini" effect="dark">{{
+                    item.status == 1 ? "在售" : "下架"
+                  }}</el-tag>
                 </div>
               </div>
             </div>
             <div class="footer">
               <div class="edit-goods" @click="handleEditGoods(item)">编辑</div>
-              <div class="delete-goods" @click="handleDelGoods(item._id)">删除</div>
+              <div class="delete-goods" @click="handleDelGoods(item._id)">
+                删除
+              </div>
             </div>
           </div>
         </el-col>
       </el-row>
     </div>
     <!-- 添加商品 -->
-    <el-dialog title="添加商品" :visible.sync="showAddGoods" width="80%" class="avue-dialog">
-      <avue-form v-model="addForm" :option="option" @submit="handleAddGoodsSubmit" />
+    <el-dialog
+      title="添加商品"
+      :visible.sync="showAddGoods"
+      width="80%"
+      class="avue-dialog"
+    >
+      <avue-form
+        v-model="addForm"
+        :option="option"
+        @submit="handleAddGoodsSubmit"
+      />
     </el-dialog>
     <!-- 编辑商品 -->
-    <el-dialog title="编辑商品" :visible.sync="showEditGoods" class="avue-dialog" width="80%">
-      <avue-form v-model="editForm" :option="option" @submit="handleEditGoodsSubmit" />
+    <el-dialog
+      title="编辑商品"
+      :visible.sync="showEditGoods"
+      class="avue-dialog"
+      width="80%"
+    >
+      <avue-form
+        v-model="editForm"
+        :option="option"
+        @submit="handleEditGoodsSubmit"
+      />
     </el-dialog>
   </div>
 </template>
@@ -74,6 +110,7 @@ import {
   getGoodsInfo,
   updataGoodsInfo
 } from '@/api/goods'
+import { getCategoryList } from '@/api/category'
 export default {
   data() {
     return {
@@ -121,11 +158,8 @@ export default {
             prop: 'categoryID',
             span: 8,
             type: 'select',
-            dicUrl: 'categories/list',
-            props: {
-              label: 'name',
-              value: '_id'
-            }
+            group: true,
+            dicData: []
           },
           {
             label: '商品标签',
@@ -223,11 +257,8 @@ export default {
             prop: 'categories',
             span: 12,
             type: 'select',
-            dicUrl: 'categories/list',
-            props: {
-              label: 'name',
-              value: '_id'
-            },
+            group: true,
+            dicData: [],
             rules: [
               {
                 required: true,
@@ -395,10 +426,44 @@ export default {
       }
     }
   },
-  created() {
+  mounted() {
     this.getGoodsListData()
+    this.getCategoryList()
   },
   methods: {
+    // 搜索
+    handleQuerySubmit(form, done) {
+      setTimeout(() => {
+        this.$message.success('查询成功')
+        done()
+      }, 1000)
+    },
+    // 获取分类信息
+    async getCategoryList() {
+      const res = await getCategoryList()
+      // 处理数据转换为avue 符合的格式显示
+      const data = res.data.map(item => {
+        return {
+          label: item.name,
+          groups: item.children.map(v => {
+            return { value: v._id, label: v.name }
+          })
+        }
+      })
+      // 查询条件分类列表
+      this.queryOption.column.forEach(item => {
+        if (item.prop === 'categoryID') {
+          item.dicData = data
+        }
+      })
+
+      // 新增商品 分类列表
+      this.option.column.forEach(item => {
+        if (item.prop === 'categories') {
+          item.dicData = data
+        }
+      })
+    },
     // 获取商品列表
     getGoodsListData() {
       getGoodsList().then((res) => {
