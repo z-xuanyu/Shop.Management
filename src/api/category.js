@@ -42,3 +42,21 @@ export function addSubCategory(data) {
     data
   })
 }
+
+// 更新二级分类
+export function updateSubCatagory(data) {
+  return request({
+    url: 'subCategory/update',
+    method: 'put',
+    data
+  })
+}
+
+// 删除二级分类
+export function deleteSubCategory(data) {
+  return request({
+    url: 'subCategory/delete',
+    method: 'delete',
+    data
+  })
+}
