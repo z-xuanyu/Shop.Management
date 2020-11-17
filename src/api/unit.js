@@ -35,3 +35,12 @@ export function updateUnit(data) {
     data
   })
 }
+
+// 改变商品单位状态
+export function changeUnitStatus(params) {
+  return request({
+    url: 'unit/changeStatus',
+    method: 'get',
+    params
+  })
+}

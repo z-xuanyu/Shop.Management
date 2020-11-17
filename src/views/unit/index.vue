@@ -27,7 +27,7 @@
           :size="size"
           :type="type"
           :style="{ color: row.status == 1 ? 'red' : '' }"
-          @click="handleTagStatus(row)"
+          @click="handleUnitStatus(row)"
         >{{ row.status == 1 ? "禁用" : "启用" }}</el-button>
       </template>
     </avue-crud>
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { addUnit, getUnitList, deleteUnit, updateUnit } from '@/api/unit'
+import { addUnit, getUnitList, deleteUnit, updateUnit, changeUnitStatus } from '@/api/unit'
 export default {
   data() {
     return {
@@ -134,6 +134,22 @@ export default {
       } catch (err) {
         this.$message.error(err)
       }
+    },
+    // 改变状态
+    handleUnitStatus(row) {
+      const data = {
+        unitID: row._id,
+        status: !row.status
+      }
+      this.$confirm(`您确定要“${row.status ? '禁用' : '启用'}”该商品单位吗？`,
+        '提示').then(() => {
+        changeUnitStatus(data).then(() => {
+          this.getUnitListData()
+          this.$message.success('状态更新成功')
+        })
+      }).catch(() => {
+        this.$message.info('您已经取消了此操作！')
+      })
     }
   }
 }
