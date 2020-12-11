@@ -200,12 +200,24 @@ export const asyncRoutes = [
 
   },
   {
+    path: '/navigator',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'navigator',
+        component: () => import('@/views/navigator/index'),
+        meta: { title: '导航管理', icon: 'el-icon-picture' }
+      }
+    ]
+  },
+  {
     path: 'link',
     component: Layout,
     children: [
       {
         path: 'https://www.zhouxuanyu.com',
-        meta: { title: '皇家族基地', icon: 'el-icon-paperclip' }
+        meta: { title: '轩钰博客', icon: 'el-icon-paperclip' }
       }
     ]
   },
