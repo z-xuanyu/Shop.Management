@@ -29,7 +29,12 @@
           />
         </el-form-item>
 
-        <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
+        <el-tooltip
+          v-model="capsTooltip"
+          content="Caps lock is On"
+          placement="right"
+          manual
+        >
           <el-form-item prop="password">
             <span class="svg-container">
               <svg-icon icon-class="password" />
@@ -48,7 +53,9 @@
               @keyup.enter.native="handleLogin"
             />
             <span class="show-pwd" @click="showPwd">
-              <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+              <svg-icon
+                :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
+              />
             </span>
           </el-form-item>
         </el-tooltip>
@@ -56,12 +63,16 @@
         <el-button
           :loading="loading"
           type="primary"
-          style="width:100%;margin-bottom:30px;"
+          style="width: 100%; margin-bottom: 30px"
           @click.native.prevent="handleLogin"
         >立即登录</el-button>
 
-        <div style="position:relative">
-          <el-button class="thirdparty-button" type="primary" @click="showDialog = true">第三方登录</el-button>
+        <div style="position: relative">
+          <el-button
+            class="thirdparty-button"
+            type="primary"
+            @click="showDialog = true"
+          >第三方登录</el-button>
         </div>
       </el-form>
     </div>
@@ -231,8 +242,9 @@ $cursor: #fff;
   width: 100%;
   height: 100%;
   margin: 0 auto;
-  background: url('https://www.17sucai.com/preview/242158/2015-01-10/%E7%99%BB%E5%BD%95/images/cloud.jpg') center bottom repeat-x #049ec4;
-  animation: 20s linear infinite ;
+  background: url("https://www.17sucai.com/preview/242158/2015-01-10/%E7%99%BB%E5%BD%95/images/cloud.jpg")
+    center bottom repeat-x #049ec4;
+  animation: 20s linear infinite;
   .el-input {
     display: inline-block;
     height: 47px;

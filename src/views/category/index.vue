@@ -19,12 +19,9 @@
 <script>
 import {
   addCategory,
-  addSubCategory,
   getCategoryList,
   updataCategoryInfo,
-  updateSubCatagory,
-  deleteCategory,
-  deleteSubCategory
+  deleteCategory
 } from '@/api/category'
 export default {
   data() {
@@ -54,18 +51,18 @@ export default {
           },
           {
             label: '父级分类',
-            prop: 'parentID',
+            prop: 'parentId',
             align: 'left',
             span: 12,
+            filter: false,
             row: true,
             showColumn: false,
-            type: 'select',
+            type: 'tree',
             dicUrl: 'categories/list',
             props: {
               label: 'name',
               value: '_id'
-            },
-            editDisabled: true
+            }
           },
           {
             label: '类别图片',
@@ -102,6 +99,25 @@ export default {
             slot: true,
             type: 'switch',
             value: true
+          },
+          {
+            label: '创建时间',
+            prop: 'createdAt',
+            span: 16,
+            row: true,
+            type: 'date',
+            format: 'yyyy-MM-dd hh:mm:ss',
+            // valueFormat: 'yyyy-MM-dd hh:mm:ss',
+            display: false
+          },
+          {
+            label: '更新时间',
+            prop: 'updatedAt',
+            span: 16,
+            row: true,
+            type: 'date',
+            format: 'yyyy-MM-dd hh:mm:ss',
+            display: false
           }
         ]
       }
@@ -122,95 +138,44 @@ export default {
     },
     // 新增分类
     handleCategoryAddSave(row, done) {
-      // 一级分类
-      if (!row.parentID) {
-        delete row.parentID
-        setTimeout(() => {
-          addCategory(row).then(() => {
-            this.getCategoryData()
-            this.$message.success('添加成功')
-            done()
-          })
-        }, 1000)
-      } else {
-        // 二级分类
-        setTimeout(() => {
-          addSubCategory(row).then(() => {
-            this.getCategoryData()
-            this.$message.success('添加成功')
-            done()
-          })
-        }, 1000)
+      if (!row.parentId) {
+        row.parentId = 'null'
       }
+      setTimeout(() => {
+        addCategory(row).then(() => {
+          this.getCategoryData()
+          this.$message.success('添加成功')
+          done()
+        })
+      }, 1000)
     },
     // 编辑分类信息
     handleCategoryUpdata(row, index, done) {
-      // 修改父级分类
-      if (!row.parentID) {
-        const data = {
-          _id: row._id,
-          name: row.name,
-          pic: row.pic,
-          sort: row.sort,
-          status: row.status
-        }
-        setTimeout(() => {
-          updataCategoryInfo(data).then(() => {
-            this.getCategoryData()
-            this.$message.success('更新成功')
-            done()
-          })
-        }, 1000)
-      } else {
-        // 编辑更新二级分类
-        const data = {
-          _id: row._id,
-          name: row.name,
-          pic: row.pic,
-          sort: row.sort,
-          status: row.status,
-          parentID: row.parentID
-        }
-        setTimeout(() => {
-          updateSubCatagory(data).then(() => {
-            this.getCategoryData()
-            this.$message.success('更新成功')
-            done()
-          })
-        }, 1000)
+      delete row.$index
+      delete row.$parentId
+      if (!row.parentId) {
+        row.parentId = 'null'
       }
+      setTimeout(() => {
+        updataCategoryInfo(row).then(() => {
+          this.getCategoryData()
+          this.$message.success('更新成功')
+          done()
+        })
+      }, 1000)
     },
     // 删除分类
     handleCategoryDel(row) {
-      if (!row.parentID) {
-        // 如果父级含有子分类，将无法删除父级分类
-        if (row.children.length) {
-          return this.$message.error(`${row.name}包含子分类，无法删除！请先清空该分类子分类！`)
-        }
-        // 删除父级分类
-        this.$confirm(`您确定要删除“${row.name}”该分类吗？`, '提示')
-          .then(() => {
-            deleteCategory(row._id).then(() => {
-              this.getCategoryData()
-              this.$message.success('删除成功')
-            })
+      this.$confirm(`您确定要删除“${row.name}”该分类吗？`, '提示')
+        .then(() => {
+          deleteCategory(row._id).then(() => {
+            this.getCategoryData()
+            this.$message.success('删除成功')
           })
-          .catch(() => {
-            console.log('您取消了操作')
-          })
-      } else {
-        // 删除二级分类
-        this.$confirm(`您确定要删除“${row.name}”该分类吗？`, '提示')
-          .then(() => {
-            deleteSubCategory({ subCatagoryID: row._id }).then(() => {
-              this.getCategoryData()
-              this.$message.success('删除成功')
-            })
-          })
-          .catch(() => {
-            console.log('您取消了操作')
-          })
-      }
+        })
+        .catch(() => {
+          console.log('您取消了操作')
+        })
     }
   }
 }

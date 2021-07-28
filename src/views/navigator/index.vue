@@ -30,7 +30,6 @@ export default {
         index: true,
         border: true,
         align: 'center',
-        searchMenuSpan: 8,
         dialogWidth: '40%',
         column: [
           {
@@ -49,7 +48,6 @@ export default {
             tip: '只能上传jpg/png类别图片，且不超过500kb'
           },
           {
-            width: '200',
             labelWidth: 100,
             label: '导航名称',
             prop: 'name',
@@ -58,7 +56,6 @@ export default {
             search: true
           },
           {
-            width: 500,
             labelWidth: 100,
             label: '链接地址',
             prop: 'url',
@@ -66,7 +63,6 @@ export default {
             row: true
           },
           {
-            width: 80,
             labelWidth: 100,
             label: '排序',
             prop: 'sort',
@@ -75,7 +71,6 @@ export default {
             row: true
           },
           {
-            width: 150,
             labelWidth: 100,
             label: '是否开启',
             prop: 'status',
@@ -86,7 +81,6 @@ export default {
             value: true
           },
           {
-            width: 200,
             labelWidth: 100,
             label: '创建时间',
             prop: 'createdAt',
